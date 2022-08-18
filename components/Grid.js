@@ -1,12 +1,29 @@
-import PropTypes from 'prop-types';
-import Card from '@/components/Card';
-import { ExclamationIcon } from '@heroicons/react/outline';
+import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import axios from "axios";
+
+import { ExclamationIcon } from "@heroicons/react/outline";
+import Card from "@/components/Card";
 
 const Grid = ({ homes = [] }) => {
-  const isEmpty = homes.length === 0;
+  const [favorites, setFavorites] = useState([]);
+  const isEmpty = homes?.length === 0;
 
-  const toggleFavorite = async id => {
-    // TODO: Add/remove home from the authenticated user's favorites
+  useEffect(() => {
+    (async () => {
+      const { data } = await axios.get(`/api/user/favorites`);
+      setFavorites(data ?? []);
+    })();
+  }, [favorites]);
+
+  const toggleFavorite = async (id) => {
+    if (favorites.some((e) => e.id === id)) {
+      axios.delete(`api/homes/${id}/favorite`);
+      console.log("delete fav: " + id);
+    } else {
+      axios.put(`api/homes/${id}/favorite`);
+      console.log("add fav: " + id);
+    }
   };
 
   return isEmpty ? (
@@ -16,8 +33,13 @@ const Grid = ({ homes = [] }) => {
     </p>
   ) : (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {homes.map(home => (
-        <Card key={home.id} {...home} onClickFavorite={toggleFavorite} />
+      {homes.map((home) => (
+        <Card
+          {...home}
+          key={home.id}
+          onClickFavorite={() => toggleFavorite(home.id)}
+          favorite={favorites.some((e) => e.id === home.id)}
+        />
       ))}
     </div>
   );
