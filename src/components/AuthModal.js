@@ -80,10 +80,12 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
         callbackUrl: window.location.href,
         email,
       });
+
       // Something went wrong
       if (error) {
         throw new Error(error);
       }
+
       setConfirm(true);
       toast.dismiss(toastId);
     } catch (err) {
