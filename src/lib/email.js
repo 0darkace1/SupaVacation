@@ -19,7 +19,9 @@ export const sendVerificationRequest = ({ identifier, url }) => {
   const emailFile = readFileSync(path.join(emailsDir, "confirm-email.html"), {
     encoding: "utf8",
   });
+
   const emailTemplate = Handlebars.compile(emailFile);
+
   transporter.sendMail({
     from: `"✨ SupaVacation" ${process.env.EMAIL_FROM}`,
     to: identifier,
@@ -39,7 +41,9 @@ export const sendWelcomeEmail = async ({ user }) => {
     const emailFile = readFileSync(path.join(emailsDir, "welcome.html"), {
       encoding: "utf8",
     });
+
     const emailTemplate = Handlebars.compile(emailFile);
+
     await transporter.sendMail({
       from: `"✨ SupaVacation" ${process.env.EMAIL_FROM}`,
       to: email,
